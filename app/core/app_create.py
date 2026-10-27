@@ -21,9 +21,9 @@ def create_app():
         lifespan=lifespan
     )
 
-    # 1. Register exception handlers
-    app.add_exception_handler(NotFoundException, app_exception_handler)
-    app.add_exception_handler(Exception, unexpected_exception_handler)
+    # # 1. Register exception handlers
+    # app.add_exception_handler(NotFoundException, app_exception_handler)
+    # app.add_exception_handler(Exception, unexpected_exception_handler)
 
     # 2. Register middleware
     app.add_middleware(RequestLoggingMiddleware)

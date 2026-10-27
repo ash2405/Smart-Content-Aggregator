@@ -15,4 +15,6 @@ class Source(Base):
         default=True,
         nullable=False,
     )
-    source : Mapped["Source"] = relationship("Source", back_populates="article")
+    articles: Mapped[list["Article"]] = relationship(
+        back_populates="source"
+    )

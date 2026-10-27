@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
-
 class Article(Base):
     __tablename__ = "articles"
 
@@ -42,4 +41,7 @@ class Article(Base):
         nullable=True,
     )
 
-    article : Mapped[list["Article"]] = relationship("Article", back_populates="source")
+    source: Mapped["Source"] = relationship(
+        "Source",
+        back_populates="articles",
+    )
