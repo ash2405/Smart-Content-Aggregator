@@ -131,3 +131,9 @@
       -  pip freeze > requirements.txt
       * pip install pytest pytest-asyncio httpx
 ## Article APIs
+   * app/schemas/article.py
+   * python -c "from app.schemas.article import ArticleCreate, ArticleResponse; print('Article schemas imported successfully')"
+   * start work on endpoint
+      - app/repositories/article.py
+      - app/services/article.py
+      - app/routers/article.py
