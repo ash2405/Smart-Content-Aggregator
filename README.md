@@ -1,6 +1,6 @@
 # Smart Content Aggregator API — Setup Flow
 
-## 1. Create Virtual Environment
+## Create Virtual Environment
 
    ```bash
    python -m venv venv
@@ -8,7 +8,7 @@
    python --version
    ```
 
-## 2. Install Initial Dependencies
+## Install Initial Dependencies
 
    ```bash
    pip install fastapi "uvicorn[standard]" pydantic-settings python-dotenv loguru
@@ -21,7 +21,7 @@
    pip list
    ```
 
-## 3. Create Project Structure
+## Create Project Structure
 
    ```text
    smart-content-aggregator/
@@ -44,7 +44,7 @@
 
    **Important:** `.env` mein secrets rakho aur use Git mein commit mat karo. `.env.example` mein sirf placeholder values rakho.
 
-## 4. Run the FastAPI Application
+## Run the FastAPI Application
 
    ```bash
    uvicorn app.main:app --reload
@@ -55,7 +55,7 @@
    * API documentation: http://127.0.0.1:8000/docs
    * Health endpoint: http://127.0.0.1:8000/health
 
-## 5. Logging and Error Handling
+## Logging and Error Handling
 
    * `app/core/logging.py` — Configure Loguru logging.
    * `app/core/lifespan.py` — Handle application startup and shutdown.
@@ -65,7 +65,7 @@
 
    Register exception handlers and middleware when creating the FastAPI application.
 
-## 6. PostgreSQL + Async SQLAlchemy
+## PostgreSQL + Async SQLAlchemy
 
    Install dependencies:
 
@@ -82,7 +82,7 @@
    4. Create `app/db/base.py` to define the SQLAlchemy `Base`.
    5. Test the database connection using `SELECT 1`.
 
-## 7. Next Steps
+## Next Steps
 
    * Create database models: User, Source, Article, ArticleFile.
    * Configure Alembic for database migrations.
@@ -91,7 +91,7 @@
    * Write tests using pytest.
    * Add Redis caching, rate limiting, background tasks, and external API integration.
 
-## 8. Model
+## Model
    * User model : app/model/user.py
    * Install Alembic
       - pip install alembic
@@ -106,6 +106,7 @@
    * create model: user, source , article
    * To verify the all model
       * python -c "from app.models import User, Source, Article, ArticleFile; print('All models imported successfully')"
+
 ## SQL Editor Queries
    * TO check all tables
       - SELECT table_name
@@ -114,3 +115,19 @@
         ORDER BY table_name;
    * TO check the relation
       
+## Source APIs
+   * app/schemas/source.py
+   * python -c "from app.schemas.source import SourceCreate, SourceResponse; print('Source schemas imported successfully')"
+   * endpoints for Source
+      - Get
+      - Post
+      - Update
+      - Delete
+   - Auto Test
+      > pip install pytest pytest-asyncio httpx
+      > - pytest — tests run karne ke liye.
+      > - pytest-asyncio — async functions test karne ke liye.
+      > - httpx — FastAPI endpoints ko test client se call karne ke liye.
+      -  pip freeze > requirements.txt
+      * pip install pytest pytest-asyncio httpx
+## Article APIs
