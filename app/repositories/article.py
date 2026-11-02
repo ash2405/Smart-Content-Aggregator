@@ -80,3 +80,18 @@ async def update_article_item(article: Article, data: ArticleUpdate,db: AsyncSes
             setattr(article,field,value)
     await db.flush()
     return article
+
+
+async def create_external_article(
+        article_data: dict,
+        db:AsyncSession
+):
+    try:
+        article = Article(**article_data)
+
+        db.add(article)
+        await db.flush()
+        return article
+    except Exception:
+        await db.rollback()
+        raise

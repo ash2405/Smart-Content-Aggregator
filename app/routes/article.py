@@ -9,6 +9,7 @@ from app.services.article import (
     delete_article_service,
     get_articles_service,
     get_article_by_id_service,
+    save_external_article,
     update_article_service,
 )
 
@@ -63,3 +64,13 @@ async def delete_article(
     db: AsyncSession = Depends(get_db),
 ):
     return await delete_article_service(article_id, db)
+
+@router.post('/external')
+async def create_external_artcile(
+    source_id:int,
+    db:AsyncSession=Depends(get_db)
+):
+    return await save_external_article(
+        source_id=source_id,
+        db=db
+    )

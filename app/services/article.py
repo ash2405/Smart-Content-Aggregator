@@ -5,6 +5,7 @@ from app.models.article import Article
 from app.schemas.article import ArticleCreate, ArticleListResponse
 from app.repositories.article import (
     create_article_item,
+    create_external_article,
     get_article_by_id,
     get_article_by_url,
     get_all_articles,
@@ -12,9 +13,11 @@ from app.repositories.article import (
 )
 from app.repositories.source import get_source_by_id
 from app.exceptions.exceptions_log import (
+    BadRequestException,
     NotFoundException,
     ConflictException,
 )
+from app.services.external_news_service import fetch_external_articles
 
 
 async def create_article_service(
@@ -136,6 +139,59 @@ async def delete_article_service(
     try:
         await db.delete(existing_article)
         await db.commit()
+
+    except Exception:
+        await db.rollback()
+        raise
+
+async def save_external_article(
+    source_id: int,
+    db: AsyncSession,
+):
+    source = await get_source_by_id(
+        db=db,
+        source_id=source_id
+    )
+
+    if source is None:
+        raise NotFoundException(
+            f"Source with id {source_id} not found"
+        )
+
+    article_list = await fetch_external_articles(
+        source_id=source_id
+    )
+
+    if not article_list:
+        raise BadRequestException(
+            "No articles received from external API"
+        )
+
+    article_data = article_list[3]
+
+    if not article_data.get("url"):
+        raise BadRequestException("URL is required")
+
+    try:
+        existing_url = await get_article_by_url(
+            db=db,
+            url=article_data["url"]
+        )
+
+        if existing_url is not None:
+            raise ConflictException(
+                f"{article_data['url']} already exists."
+            )
+
+        article_item = await create_external_article(
+            article_data=article_data,
+            db=db,
+        )
+
+        await db.commit()
+        await db.refresh(article_item)
+
+        return article_item
 
     except Exception:
         await db.rollback()

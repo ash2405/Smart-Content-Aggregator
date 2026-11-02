@@ -174,3 +174,8 @@
         v
    Return import summary
    ```
+   * External API: Create schema app/schemas/external_news.py
+   * Add validation check in app/service/external_new_service.py: 
+   * Add transform function in app/service/external_new_service.py: (transform_external_article)
+   * Add this external data into article table in db: app/repository/article: create_external_article
+   * Update function on app/service/article save_external_article to add article in DB with all checks 
