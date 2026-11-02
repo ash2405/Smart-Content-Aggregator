@@ -1,8 +1,8 @@
 
 from datetime import datetime
 
-from sqlalchemy import String, DateTime, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
@@ -40,4 +40,14 @@ class ArticleFile(Base):
         DateTime(timezone=True),
         default=datetime.utcnow,
         nullable=False,
+    )
+
+    article: Mapped["Article"] = relationship(
+        "Article",
+        back_populates='files'
+    )
+
+    file_size: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True
     )

@@ -1,9 +1,9 @@
 
-from fastapi import APIRouter, Depends, Query, Path, status
+from fastapi import APIRouter, Body, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependency import get_db
-from app.schemas.article import ArticleCreate, ArticleResponse
+from app.schemas.article import ArticleCreate, ArticleListResponse, ArticleResponse, ArticleUpdate
 from app.services.article import (
     create_article_service,
     delete_article_service,
@@ -30,13 +30,15 @@ async def create_article(
     return await create_article_service(article, db)
 
 
-@router.get("/", response_model=list[ArticleResponse])
+@router.get("/", response_model=ArticleListResponse)
 async def get_articles(
     limit: int = Query(default=10, ge=1, le=100),
-    skip: int = Query(default=0, ge=0),
+    skip: int = Query(default=1, ge=1),
+    search: str | None = Query(default=None),
     db: AsyncSession = Depends(get_db),
+    source_id: int | None = Query(default=None, gt=0),
 ):
-    return await get_articles_service(db, limit, skip)
+    return await get_articles_service(db, limit, skip, search, source_id)
 
 
 @router.get("/{article_id}", response_model=ArticleResponse)
@@ -49,7 +51,7 @@ async def get_article_by_id(
 
 @router.put("/{article_id}", response_model=ArticleResponse)
 async def update_article(
-    article_data: ArticleCreate,
+    article_data: ArticleUpdate = Body(...),
     article_id: int = Path(gt=0),
     db: AsyncSession = Depends(get_db),
 ):

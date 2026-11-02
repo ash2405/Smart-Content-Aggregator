@@ -2,7 +2,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.article import Article
-from app.schemas.article import ArticleCreate
+from app.schemas.article import ArticleCreate, ArticleListResponse
 from app.repositories.article import (
     create_article_item,
     get_article_by_id,
@@ -41,10 +41,12 @@ async def create_article_service(
     try:
         new_article = Article(
             title=article.title,
-            url=article_url,
+            url=str(article.url),
             content=article.content,
             source_id=article.source_id,
             published_at=article.published_at,
+            category=article.category,
+            status=article.status,
         )
 
         created_article = await create_article_item(new_article, db)
@@ -62,8 +64,10 @@ async def get_articles_service(
     db: AsyncSession,
     limit: int = 10,
     skip: int = 0,
-) -> list[Article]:
-    return await get_all_articles(db, skip=skip, limit=limit)
+    search: str | None = None,
+    source_id: int | None = None,
+) -> ArticleListResponse:
+    return await get_all_articles(db, skip=skip, limit=limit, search=search, source_id=source_id)
 
 
 async def get_article_by_id_service(
@@ -92,6 +96,13 @@ async def update_article_service(
             f"Article with id {article_id} not found."
         )
 
+    source = await get_source_by_id(article_data.source_id, db)
+
+    if source is None:
+        raise NotFoundException(
+            f"Source with id {article_data.source_id} not found."
+        )
+    
     # Check for duplicate article URL if the URL is being updated
     duplicate_article = await get_article_by_url(str(article_data.url), db)
     if duplicate_article is not None:

@@ -137,3 +137,33 @@
       - app/repositories/article.py
       - app/services/article.py
       - app/routers/article.py
+   * Search by title — article title mein keyword search.
+   * Filter by source — kisi particular source ke articles.
+   * Pagination — skip and limit se results control karna.
+   * Sorting — latest articles pehle dikhana.
+## Article File
+   * Model Create: article_file.py
+   * pip install python-multipart
+   * Service : app/service/article_file.py
+   * Repository : app/repository/article_file.py
+   * Routes : app/routes/article_file.py
+## HTTPX
+   > For calling external Api Request from the Fast API we need HTTPX
+   * pip install httpx
+   * update required.txt : pip freeze > requirements.txt
+   * Run on Terminal : python -c "import httpx; print(httpx.__version__)"
+      - (If print the version shows then installation done)
+
+   * External API
+         
+   * Fetch articles
+         
+   * Validate response
+         
+   * Transform into Article schema
+         
+   * Check duplicate URL
+         
+   * Save to PostgreSQL
+         
+   * Return import summary

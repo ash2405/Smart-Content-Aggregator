@@ -137,3 +137,26 @@
       - app/repositories/article.py
       - app/services/article.py
       - app/routers/article.py
+   * Search by title — article title mein keyword search.
+   * Filter by source — kisi particular source ke articles.
+   * Pagination — skip and limit se results control karna.
+   * Sorting — latest articles pehle dikhana.
+## Article File
+   * Model Create: article_file.py
+   * pip install python-multipart
+   * Service : app/service/article_file.py
+   * Repository : app/repository/article_file.py
+   * Routes : app/routes/article_file.py
+## HTTPX
+   > For calling external Api Request from the Fast API we need HTTPX
+   * pip install httpx
+   * update required.txt : pip freeze > requirements.txt
+   * Run on Terminal : python -c "import httpx; print(httpx.__version__)"
+      - (If print the version shows then installation done)
+   * app/integrations/news_client.py
+   * check on terminal : python -c "from app.integrations.news_client import NewsAPIClient; print('Integration client imported successfully')"
+   * add in to .env : NEWS_API_URL=https://jsonplaceholder.typicode.com/posts
+   * add into app/core/config : news_api_url: str
+   * check on terminal : python -c "from app.core.config import settings; print(settings.news_api_url)"
+   * run to check external api : python -m app.test_news_api
+   * app/services/external_news_service.py
