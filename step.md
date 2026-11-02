@@ -153,17 +153,24 @@
    * update required.txt : pip freeze > requirements.txt
    * Run on Terminal : python -c "import httpx; print(httpx.__version__)"
       - (If print the version shows then installation done)
-
-   * External API
-         
-   * Fetch articles
-         
-   * Validate response
-         
-   * Transform into Article schema
-         
-   * Check duplicate URL
-         
-   * Save to PostgreSQL
-         
-   * Return import summary
+   ```text
+    External API
+        |
+        v
+   Fetch articles
+        |
+        v
+   Validate response
+        |
+        v
+   Transform into Article schema
+        |
+        v
+   Check duplicate URL
+        |
+        v
+   Save to PostgreSQL
+        |
+        v
+   Return import summary
+   ```
