@@ -153,10 +153,24 @@
    * update required.txt : pip freeze > requirements.txt
    * Run on Terminal : python -c "import httpx; print(httpx.__version__)"
       - (If print the version shows then installation done)
-   * app/integrations/news_client.py
-   * check on terminal : python -c "from app.integrations.news_client import NewsAPIClient; print('Integration client imported successfully')"
-   * add in to .env : NEWS_API_URL=https://jsonplaceholder.typicode.com/posts
-   * add into app/core/config : news_api_url: str
-   * check on terminal : python -c "from app.core.config import settings; print(settings.news_api_url)"
-   * run to check external api : python -m app.test_news_api
-   * app/services/external_news_service.py
+   ```text
+    External API
+        |
+        v
+   Fetch articles
+        |
+        v
+   Validate response
+        |
+        v
+   Transform into Article schema
+        |
+        v
+   Check duplicate URL
+        |
+        v
+   Save to PostgreSQL
+        |
+        v
+   Return import summary
+   ```
