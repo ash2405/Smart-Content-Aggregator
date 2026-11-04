@@ -179,3 +179,91 @@
    * Add transform function in app/service/external_new_service.py: (transform_external_article)
    * Add this external data into article table in db: app/repository/article: create_external_article
    * Update function on app/service/article save_external_article to add article in DB with all checks 
+## Web Scraping & Crawling
+   ``` bash
+    Web Scraping = Website se specific data extract karna.
+    Example: Kisi news website se ye information nikalni hai:
+    - Article title
+    - Article URL
+    - Published date
+    - Article content
+
+    Web Crawling = Websites ke pages aur links ko automatically discover aur visit karna.
+
+    Fetch articles directly from websites instead of relying only on third-party APIs.
+   ```
+
+   * Install BeautifulSoup and required dependencies.
+      - pip install beautifulsoup4 lxml
+      - Verify installation: python -c "from bs4 import BeautifulSoup; import lxml; print('Scraping dependencies installed successfully')"
+      ``` text
+       Why these libraries?
+        - BeautifulSoup4: Extracts information from HTML.
+        - lxml: Helps parse HTML efficiently.
+        - httpx: Already installed; we'll use it to fetch website HTML.
+      ```
+   * Fetch website HTML using HTTPX.
+      - create fetcher file app/scraping/featcher.py
+      - create html to call for testing : app/test_fetch_html.py
+   * Extract article title and content using BeautifulSoup.
+      - app/scraping/parser.py
+      - app/test_fetch_parse.py
+      - check validation : app/schemas/scraped_book.py
+      - add in to : app/test_fetch_parse.py - ScrapedBookSchema.model_validate(book)
+   * Validate scraped data using Pydantic.
+   * Save scraped articles in PostgreSQL.
+   * Web Crawling (Multiple Pages)
+      - app/scraping/parser.py : add function get_next_page_url
+      - app/scraping/crawler.py
+      - app/test_crawler.py
+   ```text
+   Page 1
+|  
+|  -- Extract 20 books
+|  
+|  -- Find Next Page link
+          |
+          v
+        Page 2
+          |
+          |-- Extract 20 books
+          |
+          |-- Find Next Page link
+                  |
+                  v
+                Page 3
+   ```
+   ```
+   Abhi tumhara crawler continuously pages fetch kar raha hai. Real-world websites par bahut fast requests bhejne se server overload ho sakta hai ya website tumhari requests block kar sakti hai.
+   Isliye crawler ko responsible banana zaroori hai.
+   ```
+
+   * User-Agent add in Fetcher mein : app/scraping/fetcher.py
+     -  headers = {
+        "User-Agent": "SmartContentAggregator/1.0"
+      }
+      
+   * Add delay in Crwalling : app/scraping/crawler.py
+   * Handle scraping errors Scraping Error Handling.
+      - Real-world scraping mein multiple errors aa sakte hain:
+         - Website unavailable.
+         - Request timeout.
+         - Connection failure.
+         - HTTP 403 / 404 / 500.
+         - Invalid HTML response.
+      * Update : app/scraping/fetcher.py with try and expect
+      * Retry Mechanism implementation
+         > If we request to any webpage if it failed so on place of return error it will try again to get content for the web page.
+         ```
+         Request 1 → Failed
+              ↓
+         Wait 1 second
+              ↓
+         Request 2 → Failed
+              ↓
+         Wait 2 seconds
+              ↓
+         Request 3 → Success
+         ```
+         * update code : app/scraping/fetcher.py
+         
