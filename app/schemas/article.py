@@ -31,9 +31,9 @@ class ArticleCreate(BaseModel):
         max_length=100,
         examples=["Technology"],
     )
-    status: Literal["Draft", "Published", "Archived"] = Field(
-        default="published",
-        examples=["published"],
+    status: Literal["Draft", "Publish", "Archived"] |  None = Field(
+        default="Publish",
+        examples=["Publish"],
     )
 
 
@@ -52,6 +52,7 @@ class ArticleListResponse(BaseModel):
 
 
 class ArticleUpdate(BaseModel):
+    id: int
     title:str = Field(default=None , min_length=1, max_length=300)
     url: HttpUrl | None = None
     content: str | None = None
@@ -59,7 +60,6 @@ class ArticleUpdate(BaseModel):
     published_at: datetime | None = None
     category: str | None
     status: str
-    created_at: datetime
 
     model_config = ConfigDict(
         json_schema_extra={

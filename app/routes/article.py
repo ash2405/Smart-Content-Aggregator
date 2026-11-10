@@ -50,7 +50,7 @@ async def get_article_by_id(
     return await get_article_by_id_service(article_id, db)
 
 
-@router.put("/{article_id}", response_model=ArticleResponse)
+@router.put("/{article_id}", response_model=ArticleUpdate)
 async def update_article(
     article_data: ArticleUpdate = Body(...),
     article_id: int = Path(gt=0),

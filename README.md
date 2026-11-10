@@ -267,3 +267,50 @@
          ```
          * update code : app/scraping/fetcher.py
          
+## Automated Testing with Pytest
+ * install the package: pip show pytest pytest-asyncio httpx
+ * install missing dependencies: pip install pytest pytest-asyncio httpx
+   - pytest: Python tests run karne ke liye.
+   - pytest-asyncio: async FastAPI/SQLAlchemy code test karne ke liye.
+   - httpx: API endpoints ko test client ke through request bhejne ke liye.
+ * Varify the package : python -m pytest --version
+ * For basic testing : test_basic.py
+ * Run the test case : python -m pytest -v
+ * check tests/health : test_health_endpoint
+ * Run the test case : python -m pytest tests/test_health.py -v
+ * Test POST Article API
+   - tests/test_articles.py
+      * Health API
+      * Create Article — POST
+      * Get Articles — GET
+      * Get Article by ID
+      * Delete Article
+      * Update Article — PUT
+      * Article Not Found — 404
+      * Invalid Article Data — 422
+   - tests/conftest.py : for common "client"
+
+## SQLite testing dependency with mock data
+   ```text
+   tests/
+   │
+   ├── mocks/
+   │   ├── __init__.py
+   │   ├── article_mock.py
+   │   ├── source_mock.py
+   │   └── user_mock.py
+   │
+   ├── conftest.py
+   ├── test_articles.py
+   ├── test_sources.py
+   └── test_users.py
+   ```
+   > For Seperate test function python -m pytest tests/test_articles.py::test_get_article_by_id -v -s
+   > For all test function python -m pytest tests/test_articles.py
+   * Work on test_article:
+   * To check covrage: pip install pytest-cov
+   * Run on cmd : pytest --cov=app -v
+   * Generate an HTML coverage report : pytest --cov=app --cov-report=html
+   * Open Html file : start htmlcov/index.html
+   * Detail Html coverage report : pytest --cov=app --cov-report=html
+   * Open Html file : start htmlcov/index.html

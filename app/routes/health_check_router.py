@@ -19,7 +19,8 @@ def health_check():
         content={
             "success": True,
             "message": f"{settings.app_name} is up and running",
-            "version": f"v{settings.app_version}"
+            "version": f"v{settings.app_version}",
+            "status":"healthy"
         }
     )
 
