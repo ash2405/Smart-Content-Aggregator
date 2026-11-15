@@ -314,3 +314,62 @@
    * Open Html file : start htmlcov/index.html
    * Detail Html coverage report : pytest --cov=app --cov-report=html
    * Open Html file : start htmlcov/index.html
+## Article data add with Crawling
+   ```text
+   Crawler configuration
+   Website fetcher
+   HTML parser
+   Article mapper
+   Crawler runner
+   Mapper, parser aur fetcher unit tests
+   Runner integration tests
+   Duplicate article handling
+   Fetch failure handling
+   Empty response handling
+   ```
+   ``` text
+   app
+     |- crawler
+         |- config.py
+         |- fetcher.py
+         |- parser.py
+         |- mapper.py
+         |- runner.py
+
+      -----------------------
+      - Fetch
+         Website ka HTML download.
+
+      - Parse
+         HTML se article information extract.
+      
+      - Map
+         Data ko ArticleCreate schema mein convert.
+      
+      - Save
+         Existing Article service se database mein save.
+
+      - Skip duplicates
+         Already existing articles ko skip.
+   ```
+   
+ * tests/test_crawler.py
+ * pytest -v -s tests/test_crawler.py
+ * tests/test_crawler_mapper.py
+ * pytest -v tests/test_crawler_mapper.py
+ * test_crawler_parser.py
+ * pytest -v tests/test_crawler_parser.py
+ * tests/test_crawler_fetcher.py
+ * pytest -v tests/test_crawler_fetcher.py
+ * tests/test_crawler_runner.py
+ * pytest -v tests/test_crawler_runner.py
+ * tests/test_crawler_runner_error.py
+ * pytest -v tests/test_crawler_runner_error.py
+ * tests/test_crawler_runner_empty_res.py 
+ * ## Handle Duplicate Insert Errors
+  ```
+  - app/services/article.py
+      from sqlalchemy.exc import IntegrityError
+ ```
+   - tests/test_article_service.py
+   

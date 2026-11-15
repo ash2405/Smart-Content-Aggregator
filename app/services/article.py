@@ -1,4 +1,5 @@
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.article import Article
@@ -57,6 +58,12 @@ async def create_article_service(
         await db.refresh(created_article)
 
         return created_article
+
+    except IntegrityError as exce:
+        await db.rollback()
+        raise ConflictException(
+            "Article already exists or violates a database constraint."
+        ) from exce
 
     except Exception:
         await db.rollback()
