@@ -21,7 +21,6 @@ async def runner_cwarling(
     # transform the articles into the desired schema
     transformed_articles = transform_external_article(articles, source_id)
 
-    print('---transformed_articles---',transformed_articles)
     save_articles =[]
     skip_duplicates = []
 

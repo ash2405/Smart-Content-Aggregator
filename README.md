@@ -372,4 +372,21 @@
       from sqlalchemy.exc import IntegrityError
  ```
    - tests/test_article_service.py
+
+## Cwarling By Router Endpoint
+* Route   : app/routes/crawler.py
+* Schemas : app/schemas/crawler.py
+* tests/test_trigger_crawler.py
+* pytest -v tests/test_trigger_crawler.py
+* tests/test_trigger_crawler_not_found.py
+* Test invalid id
+```
+Crawler API integration and its tests
+  * API endpoint connected to crawler runner.
+  * Response schema and validation.
+  * Success response test (200).
+  * Source not found test (404).
+  * Invalid source ID test (422).
+  * Complete test suite executed.
+```
    
