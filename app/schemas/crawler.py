@@ -14,3 +14,9 @@ class CrawlerResponse(BaseModel):
     success: bool
     message: str
     data: CrawlerRunResult
+
+
+class CrawlerBGResponse(BaseModel):
+    success:bool
+    message:str
+    data: None = None

@@ -389,4 +389,9 @@ Crawler API integration and its tests
   * Invalid source ID test (422).
   * Complete test suite executed.
 ```
-   
+## Background Workers
+FastAPI provides BackgroundTasks to execute work after sending the HTTP response.
+* Create a background task function : app/crawler/tasks.py
+* app/routes/crawler.py
+* update for background : app/schemas/crawler.py
+* background task at service-level test : tests/test_crawler_tasks.py
