@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     debug: bool = False
     database_url: str
     news_api_url: str
-    max_upload_size: int = 5 * 1024 * 1024  # 5 MB
+    max_upload_size: int = 2 * 1024 * 1024  # 5 MB
     upload_dir: str = "uploads"
 
     model_config = SettingsConfigDict(

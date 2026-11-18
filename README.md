@@ -395,3 +395,17 @@ FastAPI provides BackgroundTasks to execute work after sending the HTTP response
 * app/routes/crawler.py
 * update for background : app/schemas/crawler.py
 * background task at service-level test : tests/test_crawler_tasks.py
+
+## File Upload
+```
+Implementation
+
+- File upload using UploadFile
+- File size, content type, and extension validation
+- Safe server-side filename generation
+- Saving files to disk
+- Storing file metadata in PostgreSQL
+- Delete file endpoint
+```
+   -  app/routes/file.py
+## Redis Setup

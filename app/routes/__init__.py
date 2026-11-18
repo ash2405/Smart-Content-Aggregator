@@ -6,6 +6,7 @@ from app.routes.article import router as article_router
 from app.routes.article_file import router as article_file_router
 from app.routes.external_api import router as external_api
 from app.routes.crawler import router as crawler_api
+from app.routes.file import router as files_api
 
 api_router = APIRouter()
 api_router.include_router(health_check_router)
@@ -14,3 +15,4 @@ api_router.include_router(article_router)
 api_router.include_router(article_file_router)
 api_router.include_router(external_api)
 api_router.include_router(crawler_api)
+api_router.include_router(files_api)

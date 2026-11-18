@@ -6,7 +6,7 @@ from pathlib import Path
 from app.exceptions.exceptions_log import BadRequestException, NotFoundException
 from app.models.article_file import ArticleFile
 from app.repositories.article import get_article_by_id
-from app.core.config import settings
+from app.core.config import settings 
 from app.repositories.article_file import get_article_file_by_article_id
 from app.repositories.article_file import article_file_download
 ALLOWED_TYPES = {
