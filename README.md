@@ -407,5 +407,31 @@ Implementation
 - Storing file metadata in PostgreSQL
 - Delete file endpoint
 ```
-   -  app/routes/file.py
+ -  app/routes/file.py
+
 ## Redis Setup
+* Understand Redis : Redis is an in-memory data store. It stores data primarily in RAM, so reading and writing data is very fast.
+* We'll use Redis for:
+  * Caching — Store frequently requested article data.
+  * Rate Limiting — Track how many requests an IP makes.
+  * Celery Broker — Send background jobs to Celery workers.
+
+* Create a Redis Cloud account
+   * Open Redis Cloud. : https://cloud.redis.io/#/login/?socialMethod=google&utm_source=chatgpt.com&utm_medium=ai-assistant
+   * Create Database and obtain the detail.
+   * Configure REDIS_URL in .env
+   * Install Redis Python Client : pip install redis
+   * Verify installed package : pip show redis
+   * Update requirements : pip freeze > requirements.txt
+   * Create a new file : app/config/redis.py
+   * Test Redis Connection : app/core/redis.py
+   * Test connection : tests/test_redis.py
+   * Integrate Redis with FastAPI Lifespan
+      - FastAPI start ho → Redis connection verify ho.
+      - Application running ho → Redis client available rahe.
+      - FastAPI shutdown ho → Redis connection properly close ho.
+   * Add return and raise : app/core/redis.py 
+   * Create : app/services/redis.py  Implement SET, GET, DELETE operations
+   * Implement TTL (Time To Live) : TTL ka matlab hai kisi Redis key ki expiration time.
+   * Test Redis Service : tests/test_redis_getset.py
+   * Redis connection error handling

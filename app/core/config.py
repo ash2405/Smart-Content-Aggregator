@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     news_api_url: str
     max_upload_size: int = 2 * 1024 * 1024  # 5 MB
     upload_dir: str = "uploads"
+    redis_url: str
 
     model_config = SettingsConfigDict(
         env_file= ".env",
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
         case_sensitive= False
     )
 
+    
 def get_settings() -> Settings:
     return Settings()
 
