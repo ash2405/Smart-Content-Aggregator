@@ -1,9 +1,11 @@
 
+import json
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.article import Article
-from app.schemas.article import ArticleCreate, ArticleListResponse
+from app.schemas.article import ArticleCreate, ArticleListResponse, ArticleResponse
 from app.repositories.article import (
     create_article_item,
     create_external_article,
@@ -19,6 +21,7 @@ from app.exceptions.exceptions_log import (
     ConflictException,
 )
 from app.services.external_news_service import fetch_external_articles
+from app.services.redis import get_cache, set_cache
 
 
 async def create_article_service(
@@ -77,19 +80,50 @@ async def get_articles_service(
     search: str | None = None,
     source_id: int | None = None,
 ) -> ArticleListResponse:
-    return await get_all_articles(db, skip=skip, limit=limit, search=search, source_id=source_id)
+    
+    cache_key = (
+        f"articles:list:"
+        f"limit={limit}:"
+        f"skip={skip}:"
+        f"search={search}:"
+        f"source_id={source_id}"
+    )
+
+    cache_data = await get_cache(key=cache_key)
+
+    if cache_data is not None:
+        return ArticleListResponse.model_validate(
+            json.loads(cache_data)
+        )
+    
+    artilce_list =  await get_all_articles(db, skip=skip, limit=limit, search=search, source_id=source_id)
+    response = ArticleListResponse.model_validate(artilce_list).model_dump(mode="json")
+    await set_cache(key=cache_key,value=json.dumps(response),ttl=60)
+    return artilce_list
 
 
 async def get_article_by_id_service(
     article_id: int,
     db: AsyncSession,
-) -> Article:
+) -> ArticleResponse:
+
+    cache_key = f"article:{article_id}"
+
+    cache_data = await get_cache(key=cache_key)
+
+    if cache_data is not None:
+        return ArticleResponse.model_validate(
+            json.loads(cache_data)
+        )
+    
     article = await get_article_by_id(article_id, db)
 
     if article is None:
         raise NotFoundException(
             f"Article with id {article_id} not found."
         )
+    response = ArticleResponse.model_validate(article).model_dump(mode="json")
+    await set_cache(key=cache_key,value=json.dumps(response),ttl=60)
 
     return article
 

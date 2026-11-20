@@ -42,12 +42,7 @@ async def get_articles(
     return await get_articles_service(db, limit, skip, search, source_id)
 
 
-@router.get("/{article_id}", response_model=ArticleResponse)
-async def get_article_by_id(
-    article_id: int = Path(gt=0),
-    db: AsyncSession = Depends(get_db),
-):
-    return await get_article_by_id_service(article_id, db)
+
 
 
 @router.put("/{article_id}", response_model=ArticleUpdate)
@@ -74,3 +69,10 @@ async def create_external_artcile(
         source_id=source_id,
         db=db
     )
+
+@router.get("/t/{article_id}", response_model=ArticleResponse)
+async def get_article_by_id(
+    article_id: int = Path(gt=0),
+    db: AsyncSession = Depends(get_db),
+):
+    return await get_article_by_id_service(article_id, db)
