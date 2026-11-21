@@ -22,3 +22,12 @@ async def get_cache(key:str):
 
 async def delete_cache(key:str):
     return await redis_client.delete(key)
+
+async def invalidate_cache(key:str):
+    return await delete_cache(key)
+
+async def invalidate_article_list_cache():
+    async for key in redis_client.scan_iter(
+        match="articles:list:*"
+    ):
+        await redis_client.delete(key)

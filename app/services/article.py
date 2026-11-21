@@ -21,7 +21,7 @@ from app.exceptions.exceptions_log import (
     ConflictException,
 )
 from app.services.external_news_service import fetch_external_articles
-from app.services.redis import get_cache, set_cache
+from app.services.redis import get_cache, invalidate_article_list_cache, set_cache , invalidate_cache, delete_cache
 
 
 async def create_article_service(
@@ -132,6 +132,8 @@ async def update_article_service(
     article_data: ArticleCreate,
     db: AsyncSession,
 ) -> Article:
+    cache_key = f"article:{article_id}"
+
     # Fetch the existing article
     existing_article = await get_article_by_id(article_id, db)
 
@@ -159,6 +161,10 @@ async def update_article_service(
         await db.commit()
         await db.refresh(updated_article)
 
+        await invalidate_cache(key=cache_key)
+
+        await invalidate_article_list_cache()
+
         return updated_article
 
     except Exception:
@@ -169,6 +175,7 @@ async def delete_article_service(
     article_id: int,
     db: AsyncSession,
 ) -> None:
+    cache_key = f"article:{article_id}"
     # Fetch the existing article
     existing_article = await get_article_by_id(article_id, db)
 
@@ -180,6 +187,12 @@ async def delete_article_service(
     try:
         await db.delete(existing_article)
         await db.commit()
+
+        await delete_cache(key=cache_key)
+        await invalidate_article_list_cache()
+        return{
+            "message": "Article deleted!"
+        }
 
     except Exception:
         await db.rollback()

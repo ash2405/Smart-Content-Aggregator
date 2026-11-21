@@ -435,3 +435,46 @@ Implementation
    * Implement TTL (Time To Live) : TTL ka matlab hai kisi Redis key ki expiration time.
    * Test Redis Service : tests/test_redis_getset.py
    * Redis connection error handling
+
+## API Caching
+```
+Caching implement karne ke baad:
+- First request: Database se data fetch hoga aur Redis mein save hoga.
+- Second request: Redis se data return hoga.
+- Redis mein data nahi mila: Database se fetch karke Redis mein save karenge.
+```
+   * Cache Article list
+   * Cache Article details
+   * Create cache keys
+       - Create Cache key in service/article/get_articles_service
+   * Serialize response data
+   * Configure TTL
+   * Return cached response
+   * Test cache hit
+   * Test cache miss
+   * Cache Keys Review
+   * Task Done
+      - Cache Article list
+      - Cache Article details
+      - Create cache keys
+      - Serialize response data
+      - Configure TTL
+      - Return cached response
+      - Test cache hit
+      - Test cache miss
+
+## Cache Invalidation + Review
+   * Cache invalidation on Create
+      -  app/service/redis.py : invalidate_cache()
+   * Cache invalidation on Update
+      - app/service/article: 
+   * Cache invalidation on Delete
+      - app/service/article: 
+   * Cache consistency tests
+      - app/service/article: 
+   * Redis + Crawler + File Upload review
+      - GET /articles/1 — detail cache create karo.
+      - GET /articles/ — list cache create karo.
+      - DELETE /articles/1 — article delete karo.
+      - GET /articles/1 — expected 404 Not Found.
+      - GET /articles/ — deleted article response.
