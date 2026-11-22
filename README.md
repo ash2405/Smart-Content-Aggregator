@@ -478,3 +478,28 @@ Caching implement karne ke baad:
       - DELETE /articles/1 — article delete karo.
       - GET /articles/1 — expected 404 Not Found.
       - GET /articles/ — deleted article response.
+## Rate Limit
+```
+Rate Limiting ka meaning hai: Ek user kitni API requests ek fixed time period mein kar sakta hai, uski limit set karna.
+   Why use Rete Limit
+   1. Prevent API abuse: Koi user continuously requests nahi bhej sake.
+   2. Protect server: Server par unnecessary load reduce hota hai.
+   3. Prevent brute-force attacks: Login APIs ko repeated attempts se protect karna.
+   4. Fair usage: Ek user saare server resources consume nahi kar sake.
+```
+* Install Rate Limiting Library : pip install slowapi
+* Installation verify : pip show slowapi
+* Create Rate Limiter Configuration
+   - app/core/rate_limiter.py
+* Register Rate Limiter in FastAPI : app/main.py
+* Apply Rate Limit on an API : app/routes/article
+* Global rate limit vs Route-specific rate limit
+   - Route-Specific Rate Limit : Set on every route
+   - Global rate limit : default_limits=["100/minute"]
+* Rate Limiting with Redis
+   - Problem:
+      - Server restart hone par counters reset ho sakte hain.
+      - Multiple FastAPI workers/processes ke beech counters share nahi honge.
+   - Solution: Redis storage use karenge, taaki rate-limit counters Redis mein maintain hon.
+   - Configure Redis Storage : pip install limits : if not installed
+   - app/core/rate_limiter : storage_uri=settings.redis_url

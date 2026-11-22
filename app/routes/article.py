@@ -1,7 +1,8 @@
 
 from fastapi import APIRouter, Body, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from fastapi import Request
+from app.core.rate_limiter import limiter
 from app.core.dependency import get_db
 from app.schemas.article import ArticleCreate, ArticleListResponse, ArticleResponse, ArticleUpdate
 from app.services.article import (
@@ -32,7 +33,9 @@ async def create_article(
 
 
 @router.get("/", response_model=ArticleListResponse)
+@limiter.limit("2/minute")
 async def get_articles(
+    request:Request,
     limit: int = Query(default=10, ge=1, le=100),
     skip: int = Query(default=1, ge=1),
     search: str | None = Query(default=None),
@@ -71,7 +74,9 @@ async def create_external_artcile(
     )
 
 @router.get("/t/{article_id}", response_model=ArticleResponse)
+@limiter.limit("2/minute")
 async def get_article_by_id(
+    request:Request,
     article_id: int = Path(gt=0),
     db: AsyncSession = Depends(get_db),
 ):
