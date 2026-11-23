@@ -503,3 +503,110 @@ Rate Limiting ka meaning hai: Ek user kitni API requests ek fixed time period me
    - Solution: Redis storage use karenge, taaki rate-limit counters Redis mein maintain hon.
    - Configure Redis Storage : pip install limits : if not installed
    - app/core/rate_limiter : storage_uri=settings.redis_url
+* Different Rate Limits
+## Celery Setup
+```
+Celery ek background task processing system hai. Iski help se time-consuming tasks ko API response se alag execute kar sakte hain.
+
+1. Background Job kya hai?
+Background Job ek task hai jo API response return hone ke baad ya usse independently execute hota hai.
+
+Example:
+
+User API call karta hai → Article crawl karna start hota hai → API immediately response de deti hai → Crawling background mein hoti rehti hai.
+2. Celery kya hai?
+Celery ek tool/library hai jo background jobs ko manage aur execute karne mein help karti hai.
+
+Ismein:
+- FastAPI: Task request karta hai.
+- Redis: Task message store karta hai.
+- Celery Worker: Task execute karta hai.
+```
+* Celery install : pip install celery[redis]
+* Verify : pip show celery
+* Create Celery application : app/core/celery_app.py
+* Create first Celery task : app/tasks/__init__.py
+* Register tasks with Celery : app/core/celery_app.py
+* Run Celery Worker on other Terminal : celery -A app.core.celery_app:celery_app worker --pool=solo -l info
+* Send task to Worker on third Terminal: python -c "from app.tasks import test_celery_task; result = test_celery_task.delay(); print(result.id)"
+```
+Ye kya karega?
+- .delay() — task ko Redis queue mein bhejega.
+- Redis — task message store karega.
+- Celery Worker — queue se task uthakar execute karega.
+- result.id — task ka unique ID print karega
+```
+* Check Task Result On third terminal : python -c "from app.core.celery_app import celery_app; r = celery_app.AsyncResult('5454acbe-3a2c-4551-812a-b108072519c1'); print('Status:', r.status); print('Result:', r.result)"
+
+```
+Great! Ab tumne Celery ka complete basic flow successfully verify kar liya:
+- Celery app setup
+- Redis as broker and result backend
+- Task registration
+- Worker startup
+- Task dispatch using .delay()
+- Task execution
+- Result retrieval
+```
+* ### Background Jobs with Celery
+   * Create a real background task
+   * Create Route for process article : app/routes/article
+   * Task Status API:
+      - PENDING
+      - STARTED
+      - SUCCESS
+      - FAILURE
+   * app/routes/article.py
+   * Store Task ID in Redis : app/routes/article.py
+   * Create Article Status API
+   * Handle failed Celery tasks: add if condition in app/tasks/__init__.py : process_article_id
+      - Now call endpoint 
+         - POST /articles/process – Article processing task start karega. Agar task ke andar error aata hai, Celery usse FAILURE mark karega.
+         - GET /articles/status/999 – Redis se Task ID retrieve karke Celery ka current status return karega.
+   * Return the actual error message : 
+```
+    if task_result.failed():
+    return {
+        "article_id": article_id,
+        "task_id": task_id,
+        "status": task_result.status,
+        "error": str(task_result.result)
+    }
+ ```
+   - SUCCESS – Task completed successfully.
+   - FAILURE – Task raised an exception and returned the error message.
+   - NOT FOUND – No task mapping exists in Redis for that article.
+## Celery Task Improvements
+   * Task retry using self.retry().
+   * Configure retry limits.
+   * Add retry delay.
+   * Handle temporary failures.
+
+   - All point code update in aap/tasks/__init__.py
+   ```
+   Understand Celery Task Retry
+      Suppose your article processing task calls an external API.
+
+      Sometimes the API might fail because of:
+      - Temporary network issues.
+      - Server temporarily unavailable.
+      - Request timeout.
+
+      Instead of immediately marking the task as FAILURE, we can ask Celery to retry it.
+   ```
+   * Cover task
+      - bind=True and self usage
+      - self.retry() implementation
+      - max_retries=3
+      - default_retry_delay=10
+      - Retry execution and worker logs verification
+      - Final FAILURE handling
+   * Differentiate Temporary vs Permanent Errors
+   ```
+   Error	                             Retry?	                     Reason
+   Network timeout	                      Yes	                   Temporary issue
+   API server unavailable (503)	      Yes	                  Server may recover
+   Invalid article ID	                  No                   	 Permanent issue
+   Missing required data                 No	                 Retrying won't fix it
+   ```
+   * Test Temporary Error : app/tasks/__init__.py : ConnectionError

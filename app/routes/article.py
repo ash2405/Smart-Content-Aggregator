@@ -2,6 +2,8 @@
 from fastapi import APIRouter, Body, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Request
+from celery.result import AsyncResult
+from app.core.celery_app import celery_app
 from app.core.rate_limiter import limiter
 from app.core.dependency import get_db
 from app.schemas.article import ArticleCreate, ArticleListResponse, ArticleResponse, ArticleUpdate
@@ -13,6 +15,8 @@ from app.services.article import (
     save_external_article,
     update_article_service,
 )
+from app.services.redis import get_cache, set_cache
+from app.tasks import process_article_id
 
 router = APIRouter(
     prefix="/articles",
@@ -81,3 +85,64 @@ async def get_article_by_id(
     db: AsyncSession = Depends(get_db),
 ):
     return await get_article_by_id_service(article_id, db)
+
+# Celery process task for process article
+@router.post("/process")
+async def process_article(
+    article_id:int
+):
+    try:
+        task = process_article_id.delay(article_id=article_id)
+        print('task response - ', task)
+
+        await set_cache(
+            key=f"article:task:{article_id}",
+            value=task.id,
+            ttl=86400
+         )
+
+        return {
+            "message": "Article processing started",
+            "task_id": task.id,
+            "article_id": article_id
+        }
+    except Exception as exc:
+        raise exc
+
+# Check task status 
+@router.get("/status/{article_id}")
+async def check_task_status(
+    article_id
+):
+    task_id = await get_cache(
+        key=f"article:task:{article_id}"
+    )
+
+    if not task_id:
+        return {
+            "message": "No task found for this article"
+        }
+    
+    task_result = AsyncResult(
+        task_id,
+        app = celery_app
+    )
+ 
+
+    # AsyncResult() — task ka result retrieve karta hai.
+    # task_id — specific task identify karta hai.
+    # status — task ka current status deta hai.
+    # result — task ka returned data deta hai.
+    if task_result.failed():
+        return {
+            "article_id": article_id,
+            "task_id": task_id,
+            "status": task_result.status,
+            "error": str(task_result.result)
+        }
+
+    return{
+        "article_id":task_result.id,
+        "status":task_result.status,
+        "result":task_result.result
+    }
