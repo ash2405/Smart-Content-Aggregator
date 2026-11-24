@@ -610,3 +610,21 @@ Great! Ab tumne Celery ka complete basic flow successfully verify kar liya:
    Missing required data                 No	                 Retrying won't fix it
    ```
    * Test Temporary Error : app/tasks/__init__.py : ConnectionError
+## Celery Task Monitoring
+   * Task execution monitor karna.
+   * Task status track karna.
+   * Task results retrieve karna.
+   * Failed tasks ko monitor karna.
+   * Celery Inspect : celery -A app.core.celery_app:celery_app inspect active
+   * Check queued / reserved tasks : celery -A app.core.celery_app:celery_app inspect reserved
+   ```
+   Topic	                     Status
+Unique Task ID	              Done
+AsyncResult	                  Done
+Task status tracking	      Done
+STARTED status	              Done
+SUCCESS status	              Done
+FAILURE status	              Done
+Status-based messages	      Done
+PENDING limitation	          Done
+   ```

@@ -16,6 +16,10 @@ celery_app.conf.update(
     enable_utc=True
 )
 
+celery_app.conf.update(
+    task_track_started=True
+)
+
 
 # Celery() — Celery application create karta hai.
 # broker — Redis ko task messages bhejta hai.

@@ -146,3 +146,38 @@ async def check_task_status(
         "status":task_result.status,
         "result":task_result.result
     }
+
+@router.get("/task-status/{task_id}")
+async def get_task_status(task_id: str):
+
+    task_result = AsyncResult(
+        task_id,
+        app=celery_app
+    )
+
+    status = task_result.status
+
+    if status == "PENDING":
+        message = "Task is waiting to be processed"
+
+    elif status == "STARTED":
+        message = "Task is currently processing"
+
+    elif status == "SUCCESS":
+        message = "Task completed successfully"
+
+    elif status == "FAILURE":
+        message = "Task processing failed"
+
+    elif status == "RETRY":
+        message = "Task is retrying"
+
+    else:
+        message = "Unknown task status"
+
+    return {
+        "task_id": task_id,
+        "status": status,
+        "message": message,
+        "result": task_result.result if status == "SUCCESS" else None
+    }
