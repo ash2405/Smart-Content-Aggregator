@@ -618,13 +618,55 @@ Great! Ab tumne Celery ka complete basic flow successfully verify kar liya:
    * Celery Inspect : celery -A app.core.celery_app:celery_app inspect active
    * Check queued / reserved tasks : celery -A app.core.celery_app:celery_app inspect reserved
    ```
-   Topic	                     Status
-Unique Task ID	              Done
-AsyncResult	                  Done
-Task status tracking	      Done
-STARTED status	              Done
-SUCCESS status	              Done
-FAILURE status	              Done
-Status-based messages	      Done
-PENDING limitation	          Done
+         Topic	                     Status
+      Unique Task ID	              Done
+      AsyncResult	                  Done
+      Task status tracking	          Done
+      STARTED status	              Done
+      SUCCESS status	              Done
+      FAILURE status	              Done
+      Status-based messages	      Done
+      PENDING limitation	          Done
+   ```
+## Job Status Management
+```
+Job
+ ├── id
+ ├── task_id
+ ├── status
+ ├── created_at
+ └── updated_at
+```
+* Create Job Model : app/models/job
+* Run migration command : alembic revision --autogenerate -m "create jobs table"
+* Run upgrade command : alembic upgrade head
+* Create ENUM for Job Status : app/enum/job_status.py
+* Job Schema : app/schemas/job.py
+* Job Service : app/service/job.py
+* Job Route : app/routes/job.py
+* Celery integration : @router.post('/crawl',response_model=JobResponse)
+* Job Status Management : 
+   - Job ke saath Celery task connect karna : crawl_articles_task
+   - API se Celery task start karna : app/routes/job.py
+   - Save Celery Task ID into Database : app/routes/job.py
+   - PENDING se RUNNING status update : app/tasks/__init__.py
+   - Job ko database se fetch karna : DB query in app/tasks/__init__.py
+   - Run Celery terminal : celery -A app.core.celery_app:celery_app worker --pool=solo -l info
+   - COMPLETED status update: app/taks/__init__.py : crawl_articles_task
+   - Create Detail endpoint : app/routes/job
+   - Handle Failed case : app/task/__init__.py : add try & expect
+   ```html
+   <h1> Completed Task </h1>
+  
+   - PENDING
+     Job database mein create hua.
+
+   - RUNNING
+     Celery worker ne task start kiya.
+
+   - COMPLETED
+     Task successfully execute hua.
+
+   - FAILED
+     Task mein exception aayi.
    ```
