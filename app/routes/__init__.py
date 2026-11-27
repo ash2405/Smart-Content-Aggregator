@@ -8,6 +8,7 @@ from app.routes.external_api import router as external_api
 from app.routes.crawler import router as crawler_api
 from app.routes.file import router as files_api
 from app.routes.job import router as job_router
+from app.routes.user import router as user_router
 
 api_router = APIRouter()
 api_router.include_router(health_check_router)
@@ -18,3 +19,4 @@ api_router.include_router(external_api)
 api_router.include_router(crawler_api)
 api_router.include_router(files_api)
 api_router.include_router(job_router)
+api_router.include_router(user_router)

@@ -670,3 +670,53 @@ Job
    - FAILED
      Task mein exception aayi.
    ```
+## Authentication, Authorization & Security
+   * Pass hashing : pip install "passlib[bcrypt]"
+   * Password Utility : app/core/security.py
+   * Create Schema : app/schemas/user.py
+   * Create Repositiry : app/repositories/user.py
+   * Registration Service : app/services/user.py
+   * Routes : app/routes/user.py
+   * JWT Access Token : pip install "PyJWT[crypto]"
+   * Add S_Keys : .env
+   * Add S_Keys : app/core/config.py
+   * Create Access Token Function : app/core/security.py
+   * Add create_access_token function : app/services/user.py
+   * Get Current User Dependency : Create Dependency : app/core/auth.py
+   * Protect Your First API :
+   * From swagger login create token endpoint /user/token : app/routes/user.py
+   * User Ownership Authorization : 
+      - get_user_by_id
+      - if current.id != id: app/services/user.py
+   * Role-Based Authorization (RBAC)
+      - Create require_role function : app/core/auth
+   * Generic Role-Based Dependency : app/core/auth : require_role
+   * Add Role to other endpoints
+   * Test Authorization : tests/test_authorization.py
+   * Run the code : pytest -v tests/test_authorization.py
+   * Test Invalid Token : tests/test_authorization.py
+   * Test Normal User Access : tests/test_authorization.py
+   * Protect File Upload API
+   * Task to Complete:
+      - Authentication
+         - User registration working
+         - Password hashing working
+         - Login with email/password working
+         - JWT token generation working
+         - JWT expiration working
+         - Invalid token rejected
+         - Inactive user rejected
+      -  Authorization
+         - Admin-only APIs protected
+         - User-only access restrictions working
+         - Role-based access working
+         - User profile ownership checked
+         - Job ownership checked
+         - Article and Source APIs protected
+         - File upload/download APIs protected
+      - Security
+         - Secret key stored in .env
+         - .env included in .gitignore
+         - Password/hash never exposed in API responses
+         - Generic login error messages
+         - No JWT tokens committed to GitHub

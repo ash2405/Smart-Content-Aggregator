@@ -11,10 +11,16 @@ class Settings(BaseSettings):
     upload_dir: str = "uploads"
     redis_url: str
 
+    secret_key: str
+    algorithm:str = "HS256"
+    access_token_expiry_minutes:int = 30
+    
     model_config = SettingsConfigDict(
         env_file= ".env",
         env_file_encoding= "utf-8",
-        case_sensitive= False
+        case_sensitive= False,
+        extra="ignore"
+
     )
 
     
